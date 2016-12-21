@@ -7,8 +7,9 @@ var port, server, service,
     sprintf = sprintfjs.sprintf,
 	utils = require('./util-fns');
 
+// All three switch options are need but the first may be an empty string
 var switches = [
-    ['-p', '--port', 'specify listening port'],
+    ['-p', '--port PORT', 'specify listening port'],
     ['-h', '--help', 'Shows help sections']
 ];
 
@@ -28,10 +29,21 @@ parser.on('help', function() {
         console.log(line);
     }
 
+    console.log('Usage: phantomjs '+system.args[0]+' <[ipaddress:]portnumber>');
     phantom.exit(0);
 });
 
+parser.on('port', function(opt, value) {
+    port = parseInt(value);
+    console.log(opt + "=" + port.toString());
+});
+
 parser.parse(system.args);
+
+if (typeof port == 'undefined') {
+    console.log('--port is required')
+    phantom.exit()
+}
 
 var env_test = utils.getenv('PRXY_OUTPUT_DIR');
 
@@ -40,13 +52,9 @@ if (env_test == null) {
 	phantom.exit();
 	
 }
-if (system.args.length !== 2) {
-    console.log('Usage: phantomjs '+system.args[0]+' <[ipaddress:]portnumber>');
-    phantom.exit(1);
-} else {
-    port = system.args[1];
 	
 	
+function run_server(port) {
     server = require('webserver').create();
 	page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36';
     service = server.listen(port, function (request, response) {
@@ -174,3 +182,5 @@ function fn_random(request, response) {
 	response.close();
 	
 }
+
+run_server(port);
