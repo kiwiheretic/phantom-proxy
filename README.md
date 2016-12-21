@@ -6,5 +6,7 @@ This should satisfy any git module dependencies
 
 To run:  
 
-$ export PRXY\_OUTPUT\_DIR="<your output directory>"  
+```
+$ export PRXY_OUTPUT_DIR="<your output directory"  
 $ phantomjs proxy.js --port 8001
+```
